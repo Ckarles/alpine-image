@@ -1,6 +1,6 @@
 # alpine-base-image
 ![Version](https://img.shields.io/badge/version-0.1-blue.svg?cacheSeconds=2592000)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > Generate Alpine linux base images using Packer and Ansible.
 
