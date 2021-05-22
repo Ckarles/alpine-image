@@ -40,6 +40,7 @@ Feel free to check [issues page](https://gitlab.com/Ckarles/alpine-base-image/-/
 
 - [golang](https://golang.org/doc/install) >= 1.16
 - [yamllint](https://yamllint.readthedocs.io/en/stable/quickstart.html)
+- [golangci-lint](https://golangci-lint.run/usage/install/)
 
 ### Run all tests
 ```sh

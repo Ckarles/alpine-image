@@ -19,11 +19,12 @@ tasks:
     cmds:
       - rm -rf {{.OUTPUT_DIR}}
 
-  lint:
+  lint-check:
     desc: lint/fmt src code
     cmds:
       - yamllint .
-      - packer fmt {{.PACKER_ROOTDIR}}/
+      - packer fmt -check {{.PACKER_ROOTDIR}}/
+      - golangci-lint run
 
   check:
     desc: check packer config files
