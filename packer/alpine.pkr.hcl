@@ -1,5 +1,5 @@
 variable "output_dir" {
-  type    = string
+  type = string
 }
 
 variable "vm_name" {
@@ -40,8 +40,8 @@ build {
     output              = "${var.output_dir}/${var.vm_name}_{{.Provider}}.box"
   }
   provisioner "ansible" {
-    playbook_file = "${local.ansible_root}/kickstart.yml"
+    playbook_file    = "${local.ansible_root}/kickstart.yml"
     ansible_env_vars = ["ANSIBLE_CONFIG=${local.ansible_root}/ansible.cfg"]
-    user = "root"
+    user             = "root"
   }
 }

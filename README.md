@@ -27,16 +27,6 @@ task -l
 task build
 ```
 
-## Run tests
-
-### Requirements
-
-- [golang](https://golang.org/doc/install) >= 1.16
-
-### Run all tests
-```sh
-task test
-```
 
 ### [Homepage](https://gitlab.com/Ckarles/alpine-base-image)
 
@@ -46,6 +36,15 @@ Contributions, issues and feature requests are welcome!
 
 Feel free to check [issues page](https://gitlab.com/Ckarles/alpine-base-image/-/issues).
 
+### Dev requirements
+
+- [golang](https://golang.org/doc/install) >= 1.16
+- [yamllint](https://yamllint.readthedocs.io/en/stable/quickstart.html)
+
+### Run all tests
+```sh
+task test
+```
 ## Show your support
 
 Give a ⭐️ if this project helped you!

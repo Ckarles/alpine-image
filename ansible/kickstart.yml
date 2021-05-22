@@ -1,7 +1,7 @@
 ---
 
 - hosts: default
-  gather_facts: no
+  gather_facts: false
 
   vars:
     install_device: "/dev/vda"
@@ -49,6 +49,8 @@
       authorized_key:
         user: "root"
         path: "/mnt/root/.ssh/authorized_keys"
-        exclusive: yes
-        key: |
-          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO2qXLAsQr5WbMwgYQWKOYrFWkl+lB/c6knvyJoGdUCH
+        exclusive: false
+        key: "\
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO2qXLAsQr5WbMwgYQW\
+          KOYrFWkl+lB/c6knvyJoGdUCH\
+        "
