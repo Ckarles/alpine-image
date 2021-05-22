@@ -16,6 +16,23 @@
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
 ```
 
+## Running test
+
+### Requirements
+
+- [golang](https://golang.org/doc/install) >= 1.16
+
+### Install dependencies
+
+```sh
+go mod download
+```
+
+### Run all tests
+```sh
+go test -timeout 30m ./...
+```
+
 ### [Homepage](https://gitlab.com/Ckarles/alpine-base-image)
 
 ## Contributing
