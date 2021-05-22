@@ -10,7 +10,8 @@ env:
 tasks:
   default:
     cmds:
-      - task: test
+      - task --list
+    silent: true
 
   deps:
     desc: download golang dependencies
