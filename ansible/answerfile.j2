@@ -1,0 +1,30 @@
+# alpine node answerfile to feed setup-alpine
+# setup-alpine -e -f <this-file>
+
+KEYMAPOPTS="us us"
+
+HOSTNAMEOPTS="-n alpine"
+
+# Contents of /etc/network/interfaces
+INTERFACESOPTS="auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+"
+
+DNSOPTS=""
+
+TIMEZONEOPTS="-z Europe/Berlin"
+
+PROXYOPTS="none"
+
+# Add a random mirror
+APKREPOSOPTS="-1"
+
+SSHDOPTS="-c openssh"
+NTPOPTS="-c openntpd"
+
+# `-s 0`: Disable swap
+DISKOPTS="-m sys -s 0 {{install_device}}"
+ERASEDISKS="{{install_device}}"

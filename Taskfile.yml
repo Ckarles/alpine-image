@@ -13,11 +13,6 @@ tasks:
       - task --list
     silent: true
 
-  deps:
-    desc: download golang dependencies
-    cmds:
-      - go mod download
-
   clean:
     desc: remove generated artifacts
     cmds:
@@ -35,7 +30,6 @@ tasks:
 
   test:
     desc: trigger all golang tests
-    deps: [deps,check]
     cmds:
       - go test -timeout 30m ./...
 
@@ -47,5 +41,6 @@ tasks:
       - packer build {{.PACKER_ROOTDIR}}/
     sources:
       - packer/**
+      - ansible/**
     generates:
       - "{{.OUTPUT_DIR}}/**"
