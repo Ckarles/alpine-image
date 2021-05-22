@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task: test
+
+  test:
+    desc: trigger all golang tests
+    cmds:
+      - go test -timeout 30m ./...
+    deps: [deps]
+
+  deps:
+    desc: download golang dependencies
+    cmds:
+      - go mod download
