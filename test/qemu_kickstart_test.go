@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -15,14 +16,13 @@ import (
 func TestQemu(t *testing.T) {
 	t.Parallel()
 
-	vmName := "test.qcow2"
+	fmt.Println(RootDir(t))
+	vmName := "test"
 
 	outputDir, err := ioutil.TempDir("", "test-output")
 	if err != nil {
 		t.Fatalf("cannot create output dir: %v", err)
 	}
-
-	outputFile := filepath.Join(outputDir, vmName)
 
 	os.RemoveAll(outputDir)
 	defer os.RemoveAll(outputDir)
@@ -44,12 +44,19 @@ func TestQemu(t *testing.T) {
 	}
 
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-		t.Error("did not create an output directory")
+		t.Errorf("did not create an output directory: %s", outputDir)
 	}
 
-	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-		t.Error("did not creates a .qcow2 image")
+	qcow2File := filepath.Join(outputDir, vmName+".qcow2")
+	if _, err := os.Stat(qcow2File); os.IsNotExist(err) {
+		t.Errorf("did not create a .qcow2 image: %s", qcow2File)
 	}
+
+	boxFile := filepath.Join(outputDir, vmName+"_libvirt.box")
+	if _, err := os.Stat(boxFile); os.IsNotExist(err) {
+		t.Errorf("did not create a vagrant box: %s", boxFile)
+	}
+
 }
 
 func RootDir(tb testing.TB) string {

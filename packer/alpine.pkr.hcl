@@ -1,11 +1,10 @@
 variable "output_dir" {
   type    = string
-  default = "../output-alpine"
 }
 
 variable "vm_name" {
   type    = string
-  default = "alpine.qemu"
+  default = "alpine"
 }
 
 source "qemu" "alpine" {
@@ -15,7 +14,7 @@ source "qemu" "alpine" {
   ssh_password        = ""
   use_default_display = true
   output_directory    = "${var.output_dir}"
-  vm_name             = "${var.vm_name}"
+  vm_name             = "${var.vm_name}.qcow2"
   boot_command = [
     "root<enter><wait>",
     "ifconfig eth0 up && udhcpc -i eth0<enter><wait>",
@@ -32,4 +31,8 @@ source "qemu" "alpine" {
 
 build {
   sources = ["source.qemu.alpine"]
+  post-processor "vagrant" {
+    keep_input_artifact = true
+    output              = "${var.output_dir}/${var.vm_name}_{{.Provider}}.box"
+  }
 }
