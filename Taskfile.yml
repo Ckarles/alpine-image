@@ -1,17 +1,50 @@
 version: '3'
 
+vars:
+  PACKER_ROOTDIR: packer
+  OUTPUT_DIR: dist-images
+
+env:
+  PKR_VAR_output_dir: "{{.OUTPUT_DIR}}"
+
 tasks:
   default:
     cmds:
       - task: test
 
-  test:
-    desc: trigger all golang tests
-    cmds:
-      - go test -timeout 30m ./...
-    deps: [deps]
-
   deps:
     desc: download golang dependencies
     cmds:
       - go mod download
+
+  clean:
+    desc: remove generated artifacts
+    cmds:
+      - rm -rf {{.OUTPUT_DIR}}
+
+  fmt:
+    desc: format packer hcl templates
+    cmds:
+      - packer fmt {{.PACKER_ROOTDIR}}/
+
+  check:
+    desc: check packer config files
+    cmds:
+      - packer validate {{.PACKER_ROOTDIR}}/
+
+  test:
+    desc: trigger all golang tests
+    deps: [deps,check]
+    cmds:
+      - go test -timeout 30m ./...
+
+  build:
+    desc: build images with packer
+    cmds:
+      - task: clean
+      - task: check
+      - packer build {{.PACKER_ROOTDIR}}/
+    sources:
+      - packer/**
+    generates:
+      - "{{.OUTPUT_DIR}}/**"

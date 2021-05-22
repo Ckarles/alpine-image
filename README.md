@@ -17,7 +17,17 @@
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
 ```
 
-## Running tests
+## Usage
+
+```sh
+# list available tasks
+task -l
+
+# build images (use -f to force a rebuild)
+task build
+```
+
+## Run tests
 
 ### Requirements
 
