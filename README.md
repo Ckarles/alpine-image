@@ -17,7 +17,7 @@
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
 ```
 
-## Running test
+## Running tests
 
 ### Requirements
 
