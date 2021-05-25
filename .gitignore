@@ -1,3 +1,5 @@
+*/dist/
 packer_cache/
-dist-images/
+Vagrantfile
 .task
+.vagrant

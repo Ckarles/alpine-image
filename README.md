@@ -24,6 +24,7 @@ git clone https://gitlab.com/Ckarles/alpine-base-image.git
 task -l
 
 # build images (use -f to force a rebuild)
+# ensure that the root key is added in ssh-agent
 task build
 ```
 

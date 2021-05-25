@@ -1,49 +1,67 @@
 ---
 version: '3'
 
-vars:
-  PACKER_ROOTDIR: packer
-  OUTPUT_DIR: dist-images
-
-env:
-  PKR_VAR_output_dir: "{{.OUTPUT_DIR}}"
-
 tasks:
   default:
+    silent: true
     cmds:
       - task --list
-    silent: true
-
-  clean:
-    desc: remove generated artifacts
-    cmds:
-      - rm -rf {{.OUTPUT_DIR}}
-
-  lint-check:
-    desc: lint/fmt src code
-    cmds:
-      - yamllint .
-      - packer fmt -check {{.PACKER_ROOTDIR}}/
-      - golangci-lint run
 
   check:
-    desc: check packer config files
+    desc: lint/fmt source code
     cmds:
-      - packer validate {{.PACKER_ROOTDIR}}/
+      - yamllint .
+      - >-
+        packer fmt -check -recursive .
+        ||(
+        echo "please run \"packer fmt -recursive $PWD\"" 1>&2
+        && exit 3
+        )
+      - golangci-lint run
 
   test:
     desc: trigger all golang tests
     cmds:
       - go test -count 1 -timeout 30m ./...
 
-  build:
-    desc: build images with packer
+  clean-stage:
+    summary: |
+      Remove generated artifacts of a specific stage.
+      Requires to set the STAGE variable, e.g.:
+
+      task build-stage STAGE=kickstart
+    label: "clean-stage:{{.STAGE}}"
     cmds:
-      - task: clean
-      - task: check
-      - packer build {{.PACKER_ROOTDIR}}/
+      - rm -rf ./{{.STAGE}}/dist
+
+  build-stage:
+    summary: |
+      Builds a specific stage assuming the dependencies are ready.
+      Requires to set the STAGE variable, e.g.:
+
+      task build-stage STAGE=kickstart
+    label: "build-stage:{{.STAGE}}"
+    env:
+      PKR_VAR_output_dir: "./{{.STAGE}}/dist"
+      PKR_VAR_input_dir: "./{{.PREV_STAGE}}/dist"
+    cmds:
+      - task: clean-stage
+        vars: {STAGE: "{{.STAGE}}"}
+      - "packer build ./{{.STAGE}}/packer/"
     sources:
-      - packer/**
-      - ansible/**
+      - "./{{.STAGE}}/packer/**"
+      - "./{{.STAGE}}/ansible/**"
+      - "./{{.PREV_STAGE}}/dist/**"
     generates:
-      - "{{.OUTPUT_DIR}}/**"
+      - "./{{.STAGE}}/dist/**"
+
+  build:
+    desc: build the images and the vagrant boxes
+    cmds:
+      - task: build-stage
+        vars:
+          STAGE: kickstart
+      - task: build-stage
+        vars:
+          PREV_STAGE: kickstart
+          STAGE: vagrant

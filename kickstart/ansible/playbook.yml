@@ -5,10 +5,11 @@
 
   vars:
     install_device: "/dev/vda"
+    python_version: "3.8"
 
   tasks:
-    - name: install python3
-      raw: "apk add python3"
+    - name: "install python3~={{ python_version }}"
+      raw: "apk add python3~={{ python_version }}"
 
     - name: gather ansible facts
       setup:
@@ -28,28 +29,36 @@
 
     - name: mount installed system
       mount:
-        path: "/mnt"
-        src: "{{install_device}}2"
-        fstype: ext4
         state: mounted
+        fstype: "{{item.t}}"
+        opts: "{{item.o | default(omit)}}"
+        src: "{{item.dev}}"
+        path: "{{item.mntpt}}"
+      loop:
+        - {t: "ext4", dev: "{{install_device}}2", mntpt: "/mnt"}
+        - {t: "ext4", dev: "{{install_device}}1", mntpt: "/mnt/boot"}
+        - {t: "proc", dev: "/proc", mntpt: "/mnt/proc"}
+        - {t: "devtmpfs", o: "rbind", dev: "/dev", mntpt: "/mnt/dev"}
+        - {t: "sysfs", o: "rbind", dev: "/sys", mntpt: "/mnt/sys"}
 
     - name: add sftp link for ansible sftp
       file:
-        path: /usr/lib/sftp-server
+        path: /mnt/usr/lib/sftp-server
         src: ssh/sftp-server
         state: link
 
     - name: disable ssh password auth
-      replace:
+      lineinfile:
         path: "/etc/ssh/sshd_config"
         regexp: "^#?PasswordAuthentication (no|yes)$"
-        replace: "PasswordAuthentication no"
+        line: "PasswordAuthentication no"
+        validate: "sshd -T -f %s"
 
     - name: copy ssh pubkeys
       authorized_key:
         user: "root"
         path: "/mnt/root/.ssh/authorized_keys"
-        exclusive: false
+        exclusive: true
         key: "\
           ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO2qXLAsQr5WbMwgYQW\
           KOYrFWkl+lB/c6knvyJoGdUCH\

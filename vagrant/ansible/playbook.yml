@@ -1,0 +1,50 @@
+---
+
+- hosts: default
+
+  tasks:
+    - name: remove all authorized keys for root user
+      authorized_key:
+        user: root
+        exclusive: true
+        key: ""
+
+    - name: apply default root user settings
+      # follows these directives: https://www.vagrantup.com/docs/boxes/base
+      block:
+        - name: change root password to default 'vagrant'
+          user:
+            name: root
+            password: "{{ 'vagrant' | password_hash('sha512') }}"
+
+        - name: add vagrant user
+          user:
+            name: vagrant
+            password: "{{ 'vagrant' | password_hash('sha512') }}"
+
+        - name: add vagrant unsecure pubkey in authorized_keys
+          authorized_key:
+            user: vagrant
+            key: |
+              https://raw.githubusercontent.com/hashicorp/vagrant/main/keys/vagrant.pub
+
+        - name: install sudo
+          package:
+            name: sudo
+            state: present
+
+        - name: add passwordless sudo to vagrant user
+          lineinfile:
+            path: /etc/sudoers
+            state: present
+            regexp: '^vagrant\s.*$'
+            line: "vagrant ALL=(ALL) NOPASSWD: ALL"
+            validate: "/usr/sbin/visudo -cf %s"
+
+        - name: apply ssh tweaks
+          lineinfile:
+            path: /etc/ssh/sshd_config
+            state: present
+            regexp: '^#?UseDNS (no|yes)$'
+            line: "UseDNS no"
+            validate: "sshd -T -f %s"
