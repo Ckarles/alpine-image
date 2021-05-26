@@ -32,7 +32,7 @@ tasks:
       task build-stage STAGE=kickstart
     label: "clean-stage:{{.STAGE}}"
     cmds:
-      - rm -rf ./{{.STAGE}}/dist
+      - rm -rf ./stage-{{.STAGE}}/dist
 
   build-stage:
     summary: |
@@ -42,16 +42,16 @@ tasks:
       task build-stage STAGE=kickstart
     label: "build-stage:{{.STAGE}}"
     env:
-      PKR_VAR_output_dir: "./{{.STAGE}}/dist"
-      PKR_VAR_input_dir: "./{{.PREV_STAGE}}/dist"
+      PKR_VAR_output_dir: "./stage-{{.STAGE}}/dist"
+      PKR_VAR_input_dir: "./stage-{{.PREV_STAGE}}/dist"
     cmds:
       - task: clean-stage
         vars: {STAGE: "{{.STAGE}}"}
-      - "packer build ./{{.STAGE}}/packer/"
+      - "packer build ./stage-{{.STAGE}}/packer/"
     sources:
-      - "./{{.STAGE}}/packer/**"
-      - "./{{.STAGE}}/ansible/**"
-      - "./{{.PREV_STAGE}}/dist/**"
+      - "./stage-{{.STAGE}}/packer/**"
+      - "./stage-{{.STAGE}}/ansible/**"
+      - "./stage-{{.PREV_STAGE}}/dist/**"
     generates:
       - "./{{.STAGE}}/dist/**"
 

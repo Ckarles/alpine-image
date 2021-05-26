@@ -19,7 +19,7 @@ func TestQemu(t *testing.T) {
 	vmName := "test"
 	outputDir := createAndRemoveTempDir(t)
 
-	runPackerTemplate(t, "kickstart/packer/libvirt.pkr.hcl", outputDir, map[string]string{
+	runPackerTemplate(t, "stage-kickstart/packer/libvirt.pkr.hcl", outputDir, map[string]string{
 		"output_dir": outputDir,
 		"vm_name":    vmName,
 	})
@@ -33,7 +33,7 @@ func TestQemu(t *testing.T) {
 	inputDir := outputDir
 	outputDir = createAndRemoveTempDir(t)
 
-	runPackerTemplate(t, "vagrant/packer/libvirt.pkr.hcl", outputDir, map[string]string{
+	runPackerTemplate(t, "stage-vagrant/packer/libvirt.pkr.hcl", outputDir, map[string]string{
 		"input_dir":  inputDir,
 		"output_dir": outputDir,
 		"vm_name":    vmName,
