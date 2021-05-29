@@ -35,7 +35,7 @@ tasks:
     cmds:
       - >-
         rc=0;
-        for f in stage*/packer/*.jsonnet; do
+        for f in stage*/packer/*.jsonnet common/packer/*.libsonnet; do
         jsonnetfmt --test "$f"
         ||{ echo "please run \"jsonnetfmt -i $f\"" 1>&2 && rc=$((rc+1));}
         done;
@@ -75,6 +75,7 @@ tasks:
       - >-
           jsonnet --create-output-dirs
           --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
+          --jpath common/packer/
           "./stage-{{.STAGE}}/packer/libvirt.jsonnet"
     sources:
       - "./stage-{{.STAGE}}/packer/**"

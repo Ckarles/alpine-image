@@ -1,32 +1,24 @@
+local common = import 'common.libsonnet';
+local libvirt = import 'libvirt.libsonnet';
+
+local stage = 'vagrant';
+
 {
   source: {
     qemu: {
-      alpine: {
+      alpine: libvirt.source {
         iso_url: './build/dist/base/alpine_libvirt.qcow2',
         iso_checksum: 'none',
-        ssh_username: 'root',
-        ssh_agent_auth: true,
-        use_default_display: true,
-        output_directory: './build/intermediates',
-        vm_name: 'alpine_libvirt.qcow2',
         disk_image: true,
-        shutdown_command: 'poweroff',
+        output_directory: './build/intermediates',
       },
     },
   },
-  build: {
-    sources: ['source.qemu.alpine'],
-    provisioner: {
-      ansible: {
-        playbook_file: './stage-vagrant/ansible/playbook.yml',
-        ansible_env_vars: ['ANSIBLE_CONFIG=./common/ansible/ansible.cfg'],
-        user: 'root',
-      },
-    },
+  build: common.build(stage) + {
     'post-processor': {
       vagrant: {
-        output: './build/dist/vagrant/alpine_libvirt.box',
-        vagrantfile_template: './stage-vagrant/packer/libvirt_Vagrantfile.tpl',
+        output: './build/dist/vagrant/alpine_{{.Provider}}.box',
+        vagrantfile_template: './stage-vagrant/packer/Vagrantfile.tpl',
       },
     },
   },
