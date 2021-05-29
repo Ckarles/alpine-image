@@ -26,7 +26,7 @@
     'post-processor': {
       vagrant: {
         output: './build/dist/vagrant/alpine_libvirt.box',
-        vagrantfile_template: './stage-vagrant/packer/Vagrantfile.tpl',
+        vagrantfile_template: './stage-vagrant/packer/libvirt_Vagrantfile.tpl',
       },
     },
   },
