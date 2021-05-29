@@ -8,60 +8,97 @@ tasks:
       - task --list
 
   check:
-    desc: lint/fmt source code
+    desc: check lint/fmt source code
+    deps:
+      - check:yaml
+      - check:jsonnet
+
+
+  clean:
+    desc: remove build artifacts
     cmds:
-      - yamllint .
-      - >-
-        packer fmt -check -recursive .
-        ||(
-        echo "please run \"packer fmt -recursive $PWD\"" 1>&2
-        && exit 3
-        )
-      - golangci-lint run
-
-  test:
-    desc: trigger all golang tests
-    cmds:
-      - go test -count 1 -timeout 30m ./...
-
-  clean-stage:
-    summary: |
-      Remove generated artifacts of a specific stage.
-      Requires to set the STAGE variable, e.g.:
-
-      task build-stage STAGE=kickstart
-    label: "clean-stage:{{.STAGE}}"
-    cmds:
-      - rm -rf ./stage-{{.STAGE}}/dist
-
-  build-stage:
-    summary: |
-      Builds a specific stage assuming the dependencies are ready.
-      Requires to set the STAGE variable, e.g.:
-
-      task build-stage STAGE=kickstart
-    label: "build-stage:{{.STAGE}}"
-    env:
-      PKR_VAR_output_dir: "./stage-{{.STAGE}}/dist"
-      PKR_VAR_input_dir: "./stage-{{.PREV_STAGE}}/dist"
-    cmds:
-      - task: clean-stage
-        vars: {STAGE: "{{.STAGE}}"}
-      - "packer build ./stage-{{.STAGE}}/packer/"
-    sources:
-      - "./stage-{{.STAGE}}/packer/**"
-      - "./stage-{{.STAGE}}/ansible/**"
-      - "./stage-{{.PREV_STAGE}}/dist/**"
-    generates:
-      - "./{{.STAGE}}/dist/**"
+      - rm -rf ./build
 
   build:
     desc: build the images and the vagrant boxes
     cmds:
-      - task: build-stage
+      - task: build:image
         vars:
-          STAGE: kickstart
-      - task: build-stage
+          STAGE: base
+      - task: build:image
         vars:
-          PREV_STAGE: kickstart
+          PREV_STAGE: base
           STAGE: vagrant
+
+  check:yaml: "yamllint ."
+
+  check:jsonnet:
+    cmds:
+      - >-
+        rc=0;
+        for f in stage*/packer/*.jsonnet; do
+        jsonnetfmt --test "$f"
+        ||{ echo "please run \"jsonnetfmt -i $f\"" 1>&2 && rc=$((rc+1));}
+        done;
+        exit $rc
+
+  clean:pkr-conf:
+    summary: |
+      Removes generated packer configs.
+      Requires to set the STAGE variable, e.g.:
+
+      task clean:pkr-conf STAGE=base
+    label: "clean:pkr-conf STAGE={{.STAGE}}"
+    cmds:
+      - rm -rf ./build/pkr-conf/{{.STAGE}}.pkr.json
+
+  clean:image:
+    summary: |
+      Removes built images of a specific stage
+      Requires to set the STAGE variable, e.g.:
+
+      task clean:image STAGE=base
+    label: "clean:image STAGE={{.STAGE}}"
+    cmds:
+      - rm -rf ./build/dist/{{.STAGE}}
+
+  build:pkr-conf:
+    summary: |
+      Builds a specific stage packer config assuming the dependencies are
+      present.
+      Requires to set the STAGE variable, e.g.:
+
+      task build:pkr-conf STAGE=base
+    label: "build:pkr-conf STAGE={{.STAGE}}"
+    cmds:
+      - task: clean:pkr-conf
+        vars: {STAGE: "{{.STAGE}}"}
+      - >-
+          jsonnet --create-output-dirs
+          --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
+          "./stage-{{.STAGE}}/packer/libvirt.jsonnet"
+    sources:
+      - "./stage-{{.STAGE}}/packer/**"
+      - "./common/packer/**"
+    generates:
+      - "./build/pkr-conf/{{.STAGE}}.pkr.json"
+
+  build:image:
+    summary: |
+      Builds a specific stage image assuming the dependencies are present.
+      Requires to set the STAGE variable, e.g.:
+
+      task build:image STAGE=base
+    label: "build:image STAGE={{.STAGE}}"
+    deps:
+      - task: build:pkr-conf
+        vars: {STAGE: "{{.STAGE}}"}
+    cmds:
+      - task: clean:image
+        vars: {STAGE: "{{.STAGE}}"}
+      - packer build "./build/pkr-conf/{{.STAGE}}.pkr.json"
+    sources:
+      - "./stage-{{.STAGE}}/**"
+      - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/**{{end}}"
+    generates:
+      - "./build/dist/{{.STAGE}}/**"
