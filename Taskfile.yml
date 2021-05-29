@@ -13,7 +13,6 @@ tasks:
       - check:yaml
       - check:jsonnet
 
-
   clean:
     desc: remove build artifacts
     cmds:

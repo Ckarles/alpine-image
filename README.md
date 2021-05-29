@@ -11,6 +11,7 @@
 - [ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) >= 2.11
 - [packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli) >= 1.7
 - [task](https://taskfile.dev/#/installation)
+- [jsonnet](https://jsonnet.org)
 
 ```sh
 # clone the project
@@ -39,14 +40,8 @@ Feel free to check [issues page](https://gitlab.com/Ckarles/alpine-base-image/-/
 
 ### Dev requirements
 
-- [golang](https://golang.org/doc/install) >= 1.16
 - [yamllint](https://yamllint.readthedocs.io/en/stable/quickstart.html)
-- [golangci-lint](https://golangci-lint.run/usage/install/)
 
-### Run all tests
-```sh
-task test
-```
 ## Show your support
 
 Give a ⭐️ if this project helped you!
