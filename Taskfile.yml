@@ -98,6 +98,7 @@ tasks:
       - packer build "./build/pkr-conf/{{.STAGE}}.pkr.json"
     sources:
       - "./stage-{{.STAGE}}/**"
+      - "./build/pkr-conf/{{.STAGE}}.pkr.json"
       - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/**{{end}}"
     generates:
       - "./build/dist/{{.STAGE}}/**"

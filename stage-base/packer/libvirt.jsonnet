@@ -5,7 +5,6 @@
         iso_url: 'https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso',
         iso_checksum: 'file:https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso.sha512',
         ssh_username: 'root',
-        ssh_password: '',
         ssh_agent_auth: true,
         use_default_display: true,
         output_directory: './build/dist/base',
@@ -23,14 +22,11 @@
           'rc-service sshd start<enter>',
         ],
         shutdown_command: 'poweroff',
-
       },
     },
   },
   build: {
-    sources: [
-      'source.qemu.alpine',
-    ],
+    sources: ['source.qemu.alpine'],
     provisioner: {
       ansible: {
         playbook_file: './stage-base/ansible/playbook.yml',
