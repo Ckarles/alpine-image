@@ -3,12 +3,16 @@ local libvirt = import 'libvirt.libsonnet';
 
 local stage = 'base';
 
+local mirror = 'alpine.global.ssl.fastly.net';
+local branch = 'v3.13';
+local version = '3.13.5';
+
 {
   source: {
     qemu: {
       alpine: libvirt.source {
-        iso_url: 'https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso',
-        iso_checksum: 'file:https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso.sha512',
+        iso_url: 'https://' + mirror + '/alpine/' + branch + '/releases/x86_64/alpine-virt-' + version + '-x86_64.iso',
+        iso_checksum: 'file:' + self.iso_url + '.sha512',
         output_directory: common.distDir + '/base',
         boot_command: [
           'root<enter><wait>',
