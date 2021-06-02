@@ -9,9 +9,9 @@ tasks:
 
   check:
     desc: check lint/fmt source code
-    deps:
-      - check:yaml
-      - check:jsonnet
+    cmds:
+      - task: check:yaml
+      - task: check:jsonnet
 
   clean:
     desc: remove build artifacts
@@ -75,7 +75,7 @@ tasks:
       - >-
           jsonnet --create-output-dirs
           --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
-          --jpath common/packer/
+          --jpath "common/packer/"
           "./stage-{{.STAGE}}/packer/libvirt.jsonnet"
     sources:
       - "./stage-{{.STAGE}}/packer/**"

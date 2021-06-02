@@ -9,7 +9,7 @@ local stage = 'base';
       alpine: libvirt.source {
         iso_url: 'https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso',
         iso_checksum: 'file:https://alpine.global.ssl.fastly.net/alpine/v3.13/releases/x86_64/alpine-virt-3.13.5-x86_64.iso.sha512',
-        output_directory: './build/dist/base',
+        output_directory: common.distDir + '/base',
         boot_command: [
           'root<enter><wait>',
           'ifconfig eth0 up && udhcpc -i eth0<enter><wait>',
@@ -25,5 +25,12 @@ local stage = 'base';
       },
     },
   },
-  build: common.build(stage),
+  build: common.build(stage) + {
+    'post-processor': {
+      checksum: {
+        checksum_types: ['sha512'],
+        output: common.distDir + '/base/{{.BuildName}}_{{.BuilderType}}.qcow2.{{.ChecksumType}}',
+      },
+    },
+  },
 }
