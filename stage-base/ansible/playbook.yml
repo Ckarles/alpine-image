@@ -63,3 +63,4 @@
           ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO2qXLAsQr5WbMwgYQW\
           KOYrFWkl+lB/c6knvyJoGdUCH\
         "
+        comment: "infra-root master key"
