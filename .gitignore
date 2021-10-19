@@ -1,5 +1,8 @@
-build/**
+.env
+.task/
+build/
+
 packer_cache/
+
 Vagrantfile
-.task
 .vagrant

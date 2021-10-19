@@ -4,12 +4,14 @@
   gather_facts: false
 
   vars:
-    install_device: "/dev/vda"
+    install_device: "/dev/sda"
     python_version: "3.8"
 
   tasks:
     - name: "install python3~={{ python_version }}"
       raw: "apk add python3~={{ python_version }}"
+
+    - raw: "which scp"
 
     - name: gather ansible facts
       setup:

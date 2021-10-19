@@ -1,19 +1,13 @@
-local common = import 'common.libsonnet';
-local libvirt = import 'libvirt.libsonnet';
-
-local stage = 'base';
-
-local mirror = 'alpine.global.ssl.fastly.net';
-local branch = 'v3.13';
-local version = '3.13.5';
+#local common = import 'common.libsonnet';
+local commonLibvirt = import 'common-libvirt.libsonnet';
 
 {
-  source: {
+  source(iso_url):: {
     qemu: {
-      alpine: libvirt.source {
-        iso_url: 'https://' + mirror + '/alpine/' + branch + '/releases/x86_64/alpine-virt-' + version + '-x86_64.iso',
-        iso_checksum: 'file:' + self.iso_url + '.sha512',
-        output_directory: common.distDir + '/base',
+      alpine: commonLibvirt.source {
+        iso_url: iso_url,
+        iso_checksum: 'file:' + iso_url + '.sha512',
+        output_directory: commonLibvirt.distDir + '/base',
         boot_command: [
           'root<enter><wait>',
           'ifconfig eth0 up && udhcpc -i eth0<enter><wait>',
@@ -29,11 +23,11 @@ local version = '3.13.5';
       },
     },
   },
-  build: common.build(stage) + {
+  build: commonLibvirt.build('base') + {
     'post-processor': {
       checksum: {
         checksum_types: ['sha512'],
-        output: common.distDir + '/base/{{.BuildName}}_{{.BuilderType}}.qcow2.{{.ChecksumType}}',
+        output: commonLibvirt.distDir + '/base/{{.BuildName}}_{{.BuilderType}}.qcow2.{{.ChecksumType}}',
       },
     },
   },

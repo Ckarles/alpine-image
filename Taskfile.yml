@@ -1,6 +1,9 @@
 ---
 version: '3'
 
+dotenv:
+  - ".env"
+
 tasks:
   default:
     silent: true
@@ -76,7 +79,7 @@ tasks:
           jsonnet --create-output-dirs
           --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
           --jpath "common/packer/"
-          "./stage-{{.STAGE}}/packer/libvirt.jsonnet"
+          "./stage-{{.STAGE}}/packer/main.jsonnet"
     sources:
       - "./stage-{{.STAGE}}/packer/**"
       - "./common/packer/**"
