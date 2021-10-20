@@ -1,0 +1,12 @@
+root<enter><wait>
+
+ifconfig eth0 up && udhcpc -i eth0 <enter><wait>
+setup-apkrepos -1 <enter><wait>
+apk add openssh openssh-sftp-server <enter><wait>
+cat <<- EOF >> /etc/ssh/sshd_config <enter>
+	PermitRootLogin yes <enter>
+	PermitEmptyPasswords yes <enter>
+EOF<enter>
+
+ln -s /usr/lib/ssh/sftp-server /usr/lib/sftp-server<enter>
+rc-service sshd start <enter>

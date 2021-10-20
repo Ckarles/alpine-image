@@ -37,12 +37,16 @@ tasks:
   check:jsonnet:
     cmds:
       - >-
-        rc=0;
-        for f in stage*/packer/*.jsonnet common/packer/*.libsonnet; do
-        jsonnetfmt --test "$f"
-        ||{ echo "please run \"jsonnetfmt -i $f\"" 1>&2 && rc=$((rc+1));}
+        tofmt=();
+        for f in ./{common,stage-*}/*{,/*}.{j,lib}sonnet; do
+        jsonnetfmt --test "${f}" 2>/dev/null
+        ||{ [ $? -eq 2 ] && tofmt+=("jsonnetfmt -i ${f}"); }
         done;
-        exit $rc
+        [ ! ${#tofmt[@]} -eq 0 ]
+        && echo 'Format these files:' 1>&2
+        && printf '%s\n' "${tofmt[@]}" 1>&2
+        && exit 1;
+        exit 0
 
   clean:pkr-conf:
     summary: |
@@ -76,13 +80,16 @@ tasks:
       - task: clean:pkr-conf
         vars: {STAGE: "{{.STAGE}}"}
       - >-
-          jsonnet --create-output-dirs
-          --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
-          --jpath "common/packer/"
-          "./stage-{{.STAGE}}/packer/main.jsonnet"
+        jpaths=();
+        for i in ./{common,stage-{{.STAGE}}}/{,*/}; do
+        jpaths+=("--jpath" "${i}"); done;
+        jsonnet --create-output-dirs
+        --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
+        "${jpaths[@]}"
+        "./stage-{{.STAGE}}/main.pkr.jsonnet"
     sources:
-      - "./stage-{{.STAGE}}/packer/**"
-      - "./common/packer/**"
+      - "./stage-{{.STAGE}}/{,*/}*"
+      - "./common/{,*/}*"
     generates:
       - "./build/pkr-conf/{{.STAGE}}.pkr.json"
 
@@ -101,8 +108,8 @@ tasks:
         vars: {STAGE: "{{.STAGE}}"}
       - packer build "./build/pkr-conf/{{.STAGE}}.pkr.json"
     sources:
-      - "./stage-{{.STAGE}}/**"
+      - "./stage-{{.STAGE}}/{,*/}*"
       - "./build/pkr-conf/{{.STAGE}}.pkr.json"
-      - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/**{{end}}"
+      - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/{,*/}{{end}}"
     generates:
-      - "./build/dist/{{.STAGE}}/**"
+      - "./build/dist/{{.STAGE}}/{,*/}*"
