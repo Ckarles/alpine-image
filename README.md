@@ -1,5 +1,5 @@
 # alpine-base-image
-![Version](https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-0.7-blue.svg?cacheSeconds=2592000)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > Generate Alpine linux base images using Packer and Ansible.
@@ -12,13 +12,15 @@
 - [packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli) >= 1.7
 - [task](https://taskfile.dev/#/installation)
 - [jsonnet](https://jsonnet.org)
+- [vagrant](https://www.vagrantup.com/downloads)
+- [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt)
 
 ```sh
 # clone the project
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
 
 # add Hezner TOKEN if needed
-echo 'TOKEN=<your token>' >> .env
+echo 'HCLOUD_TOKEN=<your token>' >> .env
 ```
 
 ## Usage
@@ -29,9 +31,13 @@ task -l
 
 # build images
 #   use -f to force a rebuild
-#   use CLOUD=hcloud to build only for hcloud
-# ensure that the root key is added in ssh-agent
+#   add CLOUD=target to build only for one cloud (e.g. hcloud)
+# ensure that the root key is added in ssh-agent for vagrant stage
 task build
+
+# start and ssh to vagrant image
+vagrant up
+vagrant ssh
 ```
 
 

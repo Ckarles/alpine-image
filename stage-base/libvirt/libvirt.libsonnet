@@ -1,11 +1,10 @@
 local semver = import 'semver.libsonnet';
 
-local common = import 'common.libsonnet';
+local baseCommon = import 'base-common.libsonnet';
 
 local commonLibvirt = import 'common-libvirt.libsonnet';
 
 {
-  sourcePath: ['source.qemu.alpine'],
   source(fetchURL):: {
     qemu: {
       alpine: commonLibvirt.source {
@@ -18,7 +17,7 @@ local commonLibvirt = import 'common-libvirt.libsonnet';
   },
   postProcessor: {
     checksum: {
-      only: common.sourceSplit($.sourcePath, start=1),
+      only: baseCommon.sourceSplit(commonLibvirt.sourcePath, start=1),
       checksum_types: ['sha512'],
       output: commonLibvirt.distDir + '/base/{{.BuildName}}_{{.BuilderType}}.qcow2.{{.ChecksumType}}',
     },

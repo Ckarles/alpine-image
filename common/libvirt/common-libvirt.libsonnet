@@ -1,4 +1,5 @@
 {
+  sourcePath: ['source.qemu.alpine'],
   source: {
     ssh_username: 'root',
     ssh_agent_auth: true,

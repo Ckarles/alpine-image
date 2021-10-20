@@ -1,4 +1,4 @@
-local common = import 'common.libsonnet';
+local baseCommon = import 'base-common.libsonnet';
 
 {
   sourcePath: ['source.hcloud.alpine'],
@@ -21,7 +21,7 @@ local common = import 'common.libsonnet';
   },
   preInstallProvisioner(fetchURL):: [{
     shell: {
-      only: common.sourceSplit($.sourcePath, start=1),
+      only: baseCommon.sourceSplit($.sourcePath, start=1),
       expect_disconnect: true,
       script: 'stage-base/hetzner/kickstart.sh',
       environment_vars: ['FETCH_URL=' + fetchURL],
