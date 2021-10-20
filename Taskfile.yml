@@ -106,7 +106,9 @@ tasks:
     cmds:
       - task: clean:image
         vars: {STAGE: "{{.STAGE}}"}
-      - packer build "./build/pkr-conf/{{.STAGE}}.pkr.json"
+      - packer build {{.CLOUD_PARAM}} "./build/pkr-conf/{{.STAGE}}.pkr.json"
+    vars:
+      CLOUD_PARAM: "{{if .CLOUD}}-only {{.CLOUD}}.alpine{{end}}"
     sources:
       - "./stage-{{.STAGE}}/{,*/}*"
       - "./build/pkr-conf/{{.STAGE}}.pkr.json"

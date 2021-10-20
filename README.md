@@ -1,5 +1,5 @@
 # alpine-base-image
-![Version](https://img.shields.io/badge/version-0.4-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > Generate Alpine linux base images using Packer and Ansible.
@@ -16,6 +16,9 @@
 ```sh
 # clone the project
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
+
+# add Hezner TOKEN if needed
+echo 'TOKEN=<your token>' >> .env
 ```
 
 ## Usage
@@ -24,7 +27,9 @@ git clone https://gitlab.com/Ckarles/alpine-base-image.git
 # list available tasks
 task -l
 
-# build images (use -f to force a rebuild)
+# build images
+#   use -f to force a rebuild
+#   use CLOUD=hcloud to build only for hcloud
 # ensure that the root key is added in ssh-agent
 task build
 ```
