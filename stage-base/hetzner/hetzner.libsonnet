@@ -9,7 +9,6 @@ local baseCommon = import 'base-common.libsonnet';
         image: 'debian-11',
         location: 'fsn1',
         server_type: 'cx11',
-        ssh_keys: ['infra-root'],
         rescue: 'linux64',
         snapshot_name: 'alpine-' + version + '_{{timestamp}}',
         snapshot_labels: {
