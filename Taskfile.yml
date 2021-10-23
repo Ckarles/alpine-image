@@ -10,11 +10,22 @@ tasks:
     cmds:
       - task --list
 
-  check:
-    desc: check lint/fmt source code
+  lint:
+    desc: lint source code
     cmds:
       - task: check:yaml
       - task: check:jsonnet
+
+  check:
+    desc: check configuration
+    cmds:
+      - >-
+        test -f "${SSH_KEY_PRIVATE_PATH}"
+        ||{
+        echo "File ${v} is missing." 1>&2;
+        exit 1;
+        };
+        exit 0
 
   clean:
     desc: remove build artifacts
@@ -23,6 +34,8 @@ tasks:
 
   build:
     desc: build the images and the vagrant boxes
+    deps:
+      - task: check
     cmds:
       - task: build:image
         vars:
@@ -85,8 +98,12 @@ tasks:
         jpaths+=("--jpath" "${i}"); done;
         jsonnet --create-output-dirs
         --output-file "./build/pkr-conf/{{.STAGE}}.pkr.json"
+        --tla-code "sshKeyPrivatePath='{{.SSH_KEY_PRIVATE_PATH}}'"
+        --tla-code "sshKeyPublicPath='{{.SSH_KEY_PUBLIC_PATH}}'"
         "${jpaths[@]}"
         "./stage-{{.STAGE}}/main.pkr.jsonnet"
+    vars:
+      SSH_KEY_PUBLIC_PATH: "{{.SSH_KEY_PRIVATE_PATH}}.pub"
     sources:
       - "./stage-{{.STAGE}}/{,*/}*"
       - "./common/{,*/}*"
@@ -112,6 +129,6 @@ tasks:
     sources:
       - "./stage-{{.STAGE}}/{,*/}*"
       - "./build/pkr-conf/{{.STAGE}}.pkr.json"
-      - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/{,*/}{{end}}"
+      - "{{if .PREV_STAGE}}./build/dist/{{.PREV_STAGE}}/*{{end}}"
     generates:
       - "./build/dist/{{.STAGE}}/{,*/}*"

@@ -1,5 +1,5 @@
 # alpine-base-image
-![Version](https://img.shields.io/badge/version-0.7-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-0.8-blue.svg?cacheSeconds=2592000)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > Generate Alpine linux base images using Packer and Ansible.
@@ -19,8 +19,14 @@
 # clone the project
 git clone https://gitlab.com/Ckarles/alpine-base-image.git
 
-# add Hezner TOKEN if needed
-echo 'HCLOUD_TOKEN=<your token>' >> .env
+
+# setup env variables in .env
+cat <<- EOF >> .env
+  # path of ssh private key
+  SSH_KEY_PRIVATE_PATH=~/.ssh/<private-key>
+  # Hezner TOKEN if using hcloud
+  HCLOUD_TOKEN=<your token>
+EOF
 ```
 
 ## Usage
@@ -30,9 +36,8 @@ echo 'HCLOUD_TOKEN=<your token>' >> .env
 task -l
 
 # build images
-#   use -f to force a rebuild
+#   use -f to force a rebuild (e.g. in care .env config is changed)
 #   add CLOUD=target to build only for one cloud (e.g. hcloud)
-# ensure that the root key is added in ssh-agent for vagrant stage
 task build
 
 # start and ssh to vagrant image
