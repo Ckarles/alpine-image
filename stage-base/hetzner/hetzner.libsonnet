@@ -10,7 +10,7 @@ local baseCommon = import 'base-common.libsonnet';
         location: 'fsn1',
         server_type: 'cx11',
         rescue: 'linux64',
-        snapshot_name: 'alpine-' + version + '_{{timestamp}}',
+        snapshot_name: 'alpine-' + version,
         snapshot_labels: {
           distribution: 'alpine',
           version: version,
