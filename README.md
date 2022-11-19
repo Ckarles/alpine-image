@@ -1,50 +1,53 @@
 # alpine-base-image
-![Version](https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-> Generate Alpine linux base images using Packer and Ansible.
+> Build Alpine Linux for hetzner cloud, qemu and vagrant using Packer and Ansible.
 
 ## Installation
+
+```bash
+# clone the project
+git clone https://gitlab.com/Ckarles/alpine-base-image.git
+```
 
 ### Requirements
 
 - [ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) >= 2.11
 - [packer](https://learn.hashicorp.com/tutorials/packer/get-started-install-cli) >= 1.7
-- [task](https://taskfile.dev/#/installation)
-- [jsonnet](https://jsonnet.org)
 - [vagrant](https://www.vagrantup.com/downloads)
 - [vagrant-libvirt](https://github.com/vagrant-libvirt/vagrant-libvirt)
 
-```sh
-# clone the project
-git clone https://gitlab.com/Ckarles/alpine-base-image.git
-
-
-# setup env variables in .env
-cat <<- EOF >> .env
-  # path of ssh private key
-  SSH_KEY_PRIVATE_PATH=~/.ssh/<private-key>
-  # Hezner TOKEN if using hcloud
-  HCLOUD_TOKEN=<your token>
-EOF
-```
-
 ## Usage
 
-```sh
-# list available tasks
-task -l
+Build an Alpine Linux base image in hetzner cloud.
+```bash
+# Set packer variables
+cat << EOF > params.pkrvars.hcl
+alpine_version = "3.13.5"
+alpine_mirror  = "alpine.global.ssl.fastly.net"
+root_ssh_key   = "~/.ssh/infra-root_ed25519"
+EOF
 
-# build images
-#   use -f to force a rebuild (e.g. in care .env config is changed)
-#   add CLOUD=target to build only for one cloud (e.g. hcloud)
-task build
+# Store hcloud secret token in a .env file
+cat << EOF > .env
+HCLOUD_TOKEN=<token>
+EOF
 
-# start and ssh to vagrant image
-vagrant up
-vagrant ssh
+# Build base image in hcloud
+env $(cat .env | xargs)                       `# set token for this command` \
+  packer build --var-file=params.pkrvars.hcl  `# input packer variables    ` \
+  -only qemu.alpine base-image                `# build only for hcloud     `
 ```
 
+Build the same image for qemu with an additional vagrant box.
+```bash
+# Build qemu image
+packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image
+
+# Build vagrant box from qemu image
+packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image_vagrant
+```
 
 ### [Homepage](https://gitlab.com/Ckarles/alpine-base-image)
 
@@ -53,10 +56,6 @@ vagrant ssh
 Contributions, issues and feature requests are welcome!
 
 Feel free to check [issues page](https://gitlab.com/Ckarles/alpine-base-image/-/issues).
-
-### Dev requirements
-
-- [yamllint](https://yamllint.readthedocs.io/en/stable/quickstart.html)
 
 ## Show your support
 

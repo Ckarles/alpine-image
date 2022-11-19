@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This script downloads a version of alpine to be used as installation medium.
+# It changes sshd config to chroot into alpine in later ssh sessions instead of
+# the host system, and setup sftp for ansible use.
+
 set -e
 
 [ -z "${FETCH_URL}" ] && exit 2
@@ -13,11 +17,9 @@ curl -so "${ROOTFS_ARCHIVE}" "${FETCH_URL}"
 # checksum archive
 curl -so "${ROOTFS_ARCHIVE}.sha512" "${FETCH_URL}.sha512"
 sha512sum -c "${ROOTFS_ARCHIVE}.sha512"
-#rm "${ROOTFS_ARCHIVE}.sha512"
 
 # unpack rootfs
 tar -xzf "${ROOTFS_ARCHIVE}"
-#rm "${ROOTFS_ARCHIVE}"
 
 # prepare chroot
 cp -v --dereference /etc/resolv.conf etc/resolv.conf
@@ -45,14 +47,13 @@ ln -s "/usr/lib/ssh/sftp-server" ./usr/lib/sftp-server
 # install install requirements in alpine
 chroot . /bin/sh <<- EOF
 	apk add \
-	  alpine-conf         `#setup-alpine utilities` \
-	  openssh             `#scp chroot bin` \
-	  openssh-sftp-server `#sftp-server chroot bin`
+	  alpine-conf         `# setup-alpine utilities` \
+	  openssh             `# scp chroot bin        ` \
+	  openssh-sftp-server `# sftp-server chroot bin`
 EOF
 
 # restart ssh and kill all connections
-# Necessary to ensure next ssh connection will be on chrooted alpine
-#systemctl reload sshd
+# necessary to ensure next ssh connection will be on chrooted alpine
 systemctl stop sshd
 nohup bash <<- EOF
 	pkill -9 ssh
