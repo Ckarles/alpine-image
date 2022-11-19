@@ -14,6 +14,7 @@ build {
 
   provisioner "ansible" {
     #ansible_env_vars = ["ANSIBLE_CONFIG=./ansible.cfg"]
+    ansible_env_vars = ["HOST_KEY_CHECKING=false"]
     extra_arguments = [
       "--extra-vars",
       jsonencode({
