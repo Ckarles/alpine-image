@@ -1,8 +1,2 @@
-.env
-.task/
+dist/
 build/
-
-packer_cache/
-
-Vagrantfile
-.vagrant

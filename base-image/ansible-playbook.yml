@@ -4,11 +4,13 @@
   gather_facts: false
 
   vars:
+    interpreter_python: "python3"
     python_version: "3.8"
+    apk_python_version_identifier: "python3~={{ python_version }}"
 
   tasks:
-    - name: "install python3~={{ python_version }}"
-      raw: "apk add python3~={{ python_version }}"
+    - name: "install {{ apk_python_version_identifier }}"
+      raw: "apk add {{ apk_python_version_identifier }}"
 
     - name: gather ansible facts
       setup:
@@ -62,9 +64,14 @@
         line: "PasswordAuthentication no"
         validate: "sshd -T -f %s"
 
-    - name: copy ssh pubkeys
+    - name: copy ssh pubkey
       authorized_key:
         user: "root"
         path: "/mnt/root/.ssh/authorized_keys"
         exclusive: true
-        key: "{{ lookup('file', ssh_key_public) }}"
+        key: "{{ lookup('file', root_ssh_keypair_public) }}"
+
+    - name: copy apk repositories
+      copy:
+        content: "{{ apk_repos | join('\n') }}"
+        dest: "/mnt/etc/apk/repositories"

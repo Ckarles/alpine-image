@@ -5,13 +5,13 @@ KEYMAPOPTS="us us"
 
 HOSTNAMEOPTS="-n alpine"
 
-# Contents of /etc/network/interfaces
-INTERFACESOPTS="auto lo
-iface lo inet loopback
-
-auto eth0
-iface eth0 inet dhcp
-"
+read -r -d '' INTERFACESOPTS <<-'EOF'
+	auto lo
+	iface lo inet loopback
+	
+	auto eth0
+	iface eth0 inet dhcp
+EOF
 
 DNSOPTS=""
 

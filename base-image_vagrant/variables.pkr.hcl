@@ -1,0 +1,1 @@
+../base-image/variables.pkr.hcl
