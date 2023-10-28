@@ -27,6 +27,8 @@ cat << EOF > params.pkrvars.hcl
 alpine_version = "3.13.5"
 alpine_mirror  = "alpine.global.ssl.fastly.net"
 root_ssh_key   = "~/.ssh/infra-root_ed25519"
+debian_mirror  = "cdimage.debian.org"
+debian_version = "11.5.0"
 EOF
 
 # Store hcloud secret token in a .env file
@@ -37,7 +39,7 @@ EOF
 # Build base image in hcloud
 env $(cat .env | xargs)                       `# set token for this command` \
   packer build --var-file=params.pkrvars.hcl  `# input packer variables    ` \
-  -only qemu.alpine base-image                `# build only for hcloud     `
+  -only hcloud.alpine base-image              `# build only for hcloud     `
 ```
 
 Build the same image for qemu with an additional vagrant box.
@@ -47,6 +49,12 @@ packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image
 
 # Build vagrant box from qemu image
 packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image_vagrant
+
+# Use the box
+vagrant init alpine-qemu dist/base-image_vagrant/alpine_qemu.box
+vagrant up
+vagrant ssh
+vagrant destroy
 ```
 
 ### [Homepage](https://gitlab.com/Ckarles/alpine-base-image)
