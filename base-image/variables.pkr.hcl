@@ -25,6 +25,20 @@ locals {
   alpine_repos = [for repo in ["main", "community"] : "${local.alpine_baseurl}/${repo}"]
 }
 
+variable "debian_version" {
+  type = string
+  description = "Debian version"
+}
+
+variable "debian_mirror" {
+  type = string
+  description = "Debian mirror to download debian from"
+}
+
+locals {
+  debian_iso = "https://${var.debian_mirror}/debian-cd/current/amd64/iso-cd/debian-${var.debian_version}-amd64-netinst.iso"
+}
+
 variable "root_ssh_key" {
   type = string
   description = "Path to the private key to push to the image root user. A compatible public key must also be present on the same dir."
