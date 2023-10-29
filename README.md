@@ -24,7 +24,7 @@ Build an Alpine Linux base image in hetzner cloud.
 ```bash
 # Set packer variables
 cat << EOF > params.pkrvars.hcl
-alpine_version = "3.13.5"
+alpine_version = "3.18.4"
 alpine_mirror  = "alpine.global.ssl.fastly.net"
 root_ssh_key   = "~/.ssh/infra-root_ed25519"
 debian_mirror  = "cdimage.debian.org"
@@ -50,10 +50,12 @@ packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image
 # Build vagrant box from qemu image
 packer build -only qemu.alpine --var-file=params.pkrvars.hcl base-image_vagrant
 
-# Use the box
-vagrant init alpine-qemu dist/base-image_vagrant/alpine_qemu.box
+# To work with the box
+## Add the box to vagrant
+vagrant box add --name alpine-qemu dist/base-image_vagrant/alpine_qemu.box
+## Then you on your workspace
+vagrant init alpine-qemu
 vagrant up
-vagrant ssh
 vagrant destroy
 ```
 

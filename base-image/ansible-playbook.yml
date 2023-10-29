@@ -5,7 +5,7 @@
 
   vars:
     interpreter_python: "python3"
-    python_version: "3.8"
+    python_version: "3.11"
     apk_python_version_identifier: "python3~={{ python_version }}"
 
   tasks:
@@ -35,7 +35,12 @@
         password: "*"
 
     - name: setup alpine
-      shell: "printf \"y\\\n\" | setup-alpine -e -f /root/answerfile"
+      shell: "printf \"\\ny\\n\" | setup-alpine -e -f /root/answerfile"
+
+    - name: create mountpoint
+      file:
+        path: "/mnt"
+        state: "directory"
 
     - name: mount installed system
       mount:
