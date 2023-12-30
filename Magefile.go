@@ -37,7 +37,7 @@ func (c PackerConfig) SourceRootfs(arch string) string {
 
 func renderPackerTemplate(wr io.Writer, workDir string) error {
 	archs := []string{"aarch64", "x86_64"}
-	alpineVersion, err := semver.NewVersion("3.18.4")
+	alpineVersion, err := semver.NewVersion("3.19.0")
 	if err != nil {
 		panic(err)
 	}
@@ -118,6 +118,12 @@ func Build(rootSSHKey string) error {
 	err = sh.RunV("packer", "build", "-var", "root_ssh_key="+rootSSHKey, "alpine-image-vagrant")
 	if err != nil {
 		return err
+	}
+	for _, arch := range []string{"aarch64", "x86_64"} {
+		err = sh.Copy("./dist/alpine-image-vagrant_"+arch+"/efivars.fd", "./dist/alpine-image_"+arch+"/efivars.fd")
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

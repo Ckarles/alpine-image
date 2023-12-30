@@ -1,5 +1,5 @@
 # alpine-base-image
-![Version](https://img.shields.io/badge/version-2.0-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-2.1-blue.svg?cacheSeconds=2592000)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 > Build Alpine Linux for hetzner cloud, qemu and vagrant using Packer and Ansible.
@@ -23,7 +23,6 @@ git clone https://gitlab.com/Ckarles/alpine-base-image.git
 
 Build an Alpine Linux base image for hetzner cloud, qemu, and vagrant, for arm64 and amd64.
 ```bash
-# Store hcloud secret token in a .env file
 HCLOUD_TOKEN=<token> mage build <path-to-private-ssh-key-to-use-for-root-account>
 ```
 
