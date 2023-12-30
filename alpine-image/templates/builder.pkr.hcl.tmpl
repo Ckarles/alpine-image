@@ -1,24 +1,27 @@
 build {
   sources = [
-    "source.qemu.alpine",
-    "source.hcloud.alpine",
+{{- range $arch := .Archs}}
+    "source.qemu.alpine_{{$arch}}",
+    "source.hcloud.alpine_{{$arch}}",
+{{- end}}
   ]
 
+{{- range $arch := .Archs}}
   provisioner "shell" {
-    only = ["hcloud.alpine"]
+    only = ["hcloud.alpine_{{$arch}}"]
 
-    environment_vars = ["FETCH_URL=${local.alpine_tar}"]
+    environment_vars = ["FETCH_URL={{$.SourceRootfs $arch}}"]
     expect_disconnect = true
     script = "${path.root}/hcloud_kickstart.sh"
   }
+{{- end}}
 
   provisioner "ansible" {
-    #ansible_env_vars = ["ANSIBLE_CONFIG=./ansible.cfg"]
     ansible_env_vars = ["HOST_KEY_CHECKING=false"]
     extra_arguments = [
       "--extra-vars",
       jsonencode({
-        apk_repos = local.alpine_repos
+        apk_repos = [for repo in ["main", "community"] : "{{.SourceBaseURL}}/${repo}"]
         root_ssh_keypair_public = "${local.root_ssh_keypair.public}"
       })
     ]
@@ -27,10 +30,12 @@ build {
     use_proxy = false
   }
 
+{{- range $arch := .Archs}}
   post-processor "checksum" {
-   only = ["qemu.alpine"]
+  only = ["qemu.alpine_{{$arch}}"]
 
    checksum_types = ["sha256"]
-   output = "${local.dist_path}/base-image/{{.BuildName}}_{{.BuilderType}}.qcow2.{{.ChecksumType}}"
+   output = "dist/alpine-image_{{$arch}}/alpine_{{$arch}}.qcow2.{{ "{{" }}.ChecksumType{{ "}}" }}"
   }
+{{- end}}
 }

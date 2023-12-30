@@ -37,10 +37,10 @@
     - name: setup alpine
       shell: "printf \"\\ny\\n\" | setup-alpine -e -f /root/answerfile"
 
-    - name: create mountpoint
-      file:
-        path: "/mnt"
-        state: "directory"
+    - name: get the fstype of the boot partition
+      shell: "blkid \"{{install_device}}1\" | sed 's/.*TYPE=\"\\([a-zA-Z0-9]*\\)\".*/\\1/'"
+      register: boot_part_fstype
+      changed_when: False
 
     - name: mount installed system
       mount:
@@ -51,7 +51,7 @@
         path: "{{item.mntpt}}"
       loop:
         - {t: "ext4", dev: "{{install_device}}2", mntpt: "/mnt"}
-        - {t: "ext4", dev: "{{install_device}}1", mntpt: "/mnt/boot"}
+        - {t: "{{boot_part_fstype.stdout}}", dev: "{{install_device}}1", mntpt: "/mnt/boot"}
         - {t: "proc", dev: "/proc", mntpt: "/mnt/proc"}
         - {t: "devtmpfs", o: "rbind", dev: "/dev", mntpt: "/mnt/dev"}
         - {t: "sysfs", o: "rbind", dev: "/sys", mntpt: "/mnt/sys"}

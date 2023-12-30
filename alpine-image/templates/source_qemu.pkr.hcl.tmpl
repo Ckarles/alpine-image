@@ -1,0 +1,30 @@
+{{- range $arch := .Archs}}
+source "qemu" "alpine_{{$arch}}" {
+  boot_command = [file("qemu_bootcmd")]
+  iso_url = "{{$.SourceVirtISO $arch}}"
+  iso_checksum = "file:{{$.SourceVirtISO $arch}}.sha512"
+  output_directory = "dist/alpine-image_{{$arch}}"
+  shutdown_command = "poweroff"
+  ssh_username = "root"
+  headless = true
+  vm_name = "alpine_{{$arch}}.qcow2"
+  #efi_firmware_vars = "dist/alpine-image_{{$arch}}/efivars.fd"
+{{- if eq $arch "x86_64"}}
+  boot_wait = "1m"
+  efi_firmware_code = "/usr/share/edk2/x64/OVMF_CODE.fd"
+  efi_firmware_vars = "/usr/share/edk2/x64/OVMF_VARS.fd"
+{{- else if eq $arch "aarch64"}}
+  qemu_binary = "qemu-system-aarch64"
+  cpu_model = "cortex-a57"
+  machine_type = "virt-2.12"
+  accelerator = "tcg"
+  boot_wait = "2m30s"
+  efi_firmware_code = "/usr/share/edk2/aarch64/QEMU_CODE.fd"
+  efi_firmware_vars = "/usr/share/edk2/aarch64/QEMU_VARS.fd"
+  qemuargs = [
+    ["-monitor", "none"],
+    ["-parallel", "none"],
+  ]
+{{- end}}
+}
+{{- end}}

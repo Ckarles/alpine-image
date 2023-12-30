@@ -1,0 +1,31 @@
+{{- range $arch := .Archs}}
+source "qemu" "alpine_{{$arch}}" {
+  disk_image = true
+  iso_checksum = "file:dist/alpine-image_{{$arch}}/alpine_{{$arch}}.qcow2.sha256"
+  iso_url = "dist/alpine-image_{{$arch}}/alpine_{{$arch}}.qcow2"
+  output_directory = "dist/intermediates/alpine-image-vagrant_{{$arch}}"
+  shutdown_command = "poweroff"
+  #ssh_agent_auth = false
+  ssh_private_key_file = "${local.root_ssh_keypair.private}"
+  ssh_username = "root"
+  #use_default_display = true
+  headless = true
+  vm_name = "alpine_{{$arch}}.qcow2"
+  efi_firmware_vars = "dist/alpine-image_{{$arch}}/efivars.fd"
+{{- if eq $arch "x86_64"}}
+  boot_wait = "1m"
+  efi_firmware_code = "/usr/share/edk2/x64/OVMF_CODE.fd"
+{{- else if eq $arch "aarch64"}}
+  qemu_binary = "qemu-system-aarch64"
+  cpu_model = "cortex-a57"
+  machine_type = "virt-2.12"
+  accelerator = "tcg"
+  boot_wait = "2m30s"
+  efi_firmware_code = "/usr/share/edk2/aarch64/QEMU_CODE.fd"
+  qemuargs = [
+    ["-monitor", "none"],
+    ["-parallel", "none"],
+  ]
+{{- end}}
+}
+{{- end}}

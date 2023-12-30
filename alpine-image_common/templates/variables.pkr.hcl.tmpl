@@ -1,0 +1,19 @@
+variable "root_ssh_key" {
+  type = string
+  description = "Path to the private key to push to the image root user. A compatible public key must also be present on the same dir."
+  validation {
+    condition     = fileexists("${var.root_ssh_key}")
+    error_message = "The private key does not exists."
+  }
+  validation {
+    condition     = fileexists("${var.root_ssh_key}.pub")
+    error_message = "The public key does not exists."
+  }
+}
+
+locals {
+  root_ssh_keypair = {
+    private = "${var.root_ssh_key}"
+    public = "${var.root_ssh_key}.pub"
+  }
+}

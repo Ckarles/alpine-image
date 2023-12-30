@@ -1,2 +1,5 @@
 dist/
-build/
+
+alpine-image/alpine-image.pkr.hcl
+alpine-image-vagrant/alpine-image-vagrant.pkr.hcl
+alpine-image-vagrant/Vagrantfile_*.tpl
