@@ -3,7 +3,7 @@ source "hcloud" "alpine_{{$arch}}" {
   image = "debian-11"
   location = "fsn1"
   rescue = "linux64"
-  server_type = "{{if eq $arch "aarch64" -}} cax11 {{- else if eq $arch "x86_64" -}} cx11 {{- end}}"
+  server_type = "{{if eq $arch "aarch64" -}} cax11 {{- else if eq $arch "x86_64" -}} cx23 {{- end}}"
   snapshot_labels = {
     distribution = "alpine"
     distribution-version = "{{$.AlpineVersion}}"
