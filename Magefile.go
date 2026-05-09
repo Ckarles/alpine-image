@@ -16,7 +16,7 @@ import (
 type PackerConfig struct {
 	Archs         []string
 	AlpineVersion string
-	SourceMirror  string
+	AlpineMirror  string
 }
 
 func (c PackerConfig) SourceBaseURL() string {
@@ -25,7 +25,7 @@ func (c PackerConfig) SourceBaseURL() string {
 		panic(err)
 	}
 	branch := fmt.Sprintf("v%d.%d", alpineVersion.Major(), alpineVersion.Minor())
-	return fmt.Sprintf("https://%s/alpine/%s", c.SourceMirror, branch)
+	return fmt.Sprintf("https://%s/alpine/%s", c.AlpineMirror, branch)
 }
 
 func (c PackerConfig) SourceVirtISO(arch string) string {
@@ -37,7 +37,7 @@ func (c PackerConfig) SourceRootfs(arch string) string {
 
 func renderPackerTemplate(wr io.Writer, workDir string) error {
 	archs := []string{"aarch64", "x86_64"}
-	alpineVersion, err := semver.NewVersion("3.19.0")
+	alpineVersion, err := semver.NewVersion("3.20.2")
 	if err != nil {
 		panic(err)
 	}

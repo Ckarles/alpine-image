@@ -19,8 +19,8 @@ TIMEZONEOPTS="-z Europe/Berlin"
 
 PROXYOPTS="none"
 
-# Add a random mirror
-APKREPOSOPTS="-1"
+# -c Add community repo
+APKREPOSOPTS="{{ apk_repos | join(' ') }}"
 
 SSHDOPTS="-c openssh"
 NTPOPTS="-c openntpd"
