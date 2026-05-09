@@ -11,16 +11,16 @@ source "qemu" "alpine_{{$arch}}" {
   #efi_firmware_vars = "dist/alpine-image_{{$arch}}/efivars.fd"
 {{- if eq $arch "x86_64"}}
   boot_wait = "1m"
-  efi_firmware_code = "/usr/share/edk2/x64/OVMF_CODE.fd"
-  efi_firmware_vars = "/usr/share/edk2/x64/OVMF_VARS.fd"
+  efi_firmware_code = "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+  efi_firmware_vars = "/usr/share/edk2/ovmf/OVMF_VARS.fd"
 {{- else if eq $arch "aarch64"}}
   qemu_binary = "qemu-system-aarch64"
   cpu_model = "cortex-a57"
-  machine_type = "virt-2.12"
+  machine_type = "virt-10.1"
   accelerator = "tcg"
   boot_wait = "2m30s"
-  efi_firmware_code = "/usr/share/edk2/aarch64/QEMU_CODE.fd"
-  efi_firmware_vars = "/usr/share/edk2/aarch64/QEMU_VARS.fd"
+  efi_firmware_code = "/usr/share/edk2/aarch64/QEMU_EFI-pflash.raw"
+  efi_firmware_vars = "/usr/share/edk2/aarch64/QEMU_EFI-qemuvars-pflash.raw"
   qemuargs = [
     ["-monitor", "none"],
     ["-parallel", "none"],
