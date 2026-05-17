@@ -1,0 +1,3 @@
+name: "qemu"
+plugin: "qemu"
+archs: [aarch64, x86_64]

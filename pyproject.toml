@@ -1,0 +1,41 @@
+[project]
+name = "alpine-image-builder"
+version = "3.0.0"
+description = "Python CLI to build Alpine Linux images via Packer"
+readme = "README.md"
+authors = [
+    { name = "Charles Durieux", email = "durieux.charles01@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8.0.0",
+    "jinja2>=3.1.0",
+    "pyyaml>=6.0.0",
+    "rich>=13.0.0",
+    "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+temporal = ["temporalio>=1.5.0"]
+
+[dependency-groups]
+dev = ["pytest>=8.0.0", "ruff>=0.5.0", "mypy>=1.10.0"]
+
+[project.scripts]
+alpine-image-builder = "alpine_image_builder.cli:main"
+alpine-image-worker = "alpine_image_builder.temporal_worker:main"
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM"]
+ignore = ["UP007", "UP006"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"

@@ -1,0 +1,15 @@
+{%- for arch in ctx.archs %}
+source "hcloud" "alpine_{{ arch }}" {
+  image = "debian-11"
+  location = "fsn1"
+  rescue = "linux64"
+  server_type = "{% if arch == 'aarch64' %}cax11{% elif arch == 'x86_64' %}cx23{% endif %}"
+  snapshot_labels = {
+    distribution = "alpine"
+    distribution-version = "{{ ctx.version }}"
+    builder-version = "0.1.0"
+  }
+  snapshot_name = "alpine-{{ ctx.version }}_{{ '{{' }}timestamp{{ '}}' }}"
+  ssh_username = "root"
+}
+{%- endfor %}

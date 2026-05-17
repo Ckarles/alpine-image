@@ -1,0 +1,29 @@
+{%- for arch in ctx.archs %}
+source "qemu" "alpine_{{ arch }}" {
+  boot_command = [file("qemu_bootcmd")]
+  iso_url = "{{ ctx.resolve_url('virt_iso', arch) }}"
+  iso_checksum = "file:{{ ctx.resolve_url('virt_iso', arch) }}.sha512"
+  output_directory = "dist/alpine-image_{{ arch }}"
+  shutdown_command = "poweroff"
+  ssh_username = "root"
+  headless = true
+  vm_name = "alpine_{{ arch }}.qcow2"
+{%- if arch == "x86_64" %}
+  boot_wait = "1m"
+  efi_firmware_code = "{{ ctx.host.firmware['x86_64']['code'] }}"
+  efi_firmware_vars = "{{ ctx.host.firmware['x86_64']['vars'] }}"
+{%- elif arch == "aarch64" %}
+  qemu_binary = "{{ ctx.host.qemu['aarch64_binary'] }}"
+  cpu_model = "cortex-a57"
+  machine_type = "virt-10.1"
+  accelerator = "tcg"
+  boot_wait = "2m30s"
+  efi_firmware_code = "{{ ctx.host.firmware['aarch64']['code'] }}"
+  efi_firmware_vars = "{{ ctx.host.firmware['aarch64']['vars'] }}"
+  qemuargs = [
+    ["-monitor", "none"],
+    ["-parallel", "none"],
+  ]
+{%- endif %}
+}
+{%- endfor %}

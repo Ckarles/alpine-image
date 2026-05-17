@@ -1,0 +1,10 @@
+packer {
+  required_plugins {
+{%- for plugin in ctx.plugins %}
+    {{ plugin.name }} = {
+      version = "{{ plugin.version }}"
+      source  = "{{ plugin.source }}"
+    }
+{%- endfor %}
+  }
+}

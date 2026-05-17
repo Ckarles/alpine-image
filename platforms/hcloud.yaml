@@ -1,0 +1,3 @@
+name: "hcloud"
+plugin: "hcloud"
+archs: [aarch64, x86_64]

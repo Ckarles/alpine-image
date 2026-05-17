@@ -1,9 +1,18 @@
 .env
 
 dist/
-
-alpine-image/alpine-image.pkr.hcl
-alpine-image-vagrant/alpine-image-vagrant.pkr.hcl
-alpine-image-vagrant/Vagrantfile_*.tpl
+generated/
 
 .vagrant
+.venv
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Temporary files
+deps-failing.log

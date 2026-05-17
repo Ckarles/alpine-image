@@ -1,0 +1,3 @@
+- [ ] Add Temporal workflow definitions (currently only activities exist; external orchestrator defines workflows).
+- [ ] Add heartbeat calls inside the `build_image` activity during long-running Packer builds.
+- [ ] Add a `cleanup_workspace` activity or flag for post-build artifact retention.

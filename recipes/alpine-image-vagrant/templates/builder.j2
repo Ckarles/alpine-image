@@ -1,0 +1,36 @@
+build {
+  sources = [
+{%- for arch in ctx.archs %}
+    "source.qemu.alpine_{{ arch }}",
+{%- endfor %}
+  ]
+
+  provisioner "ansible" {
+    extra_arguments = [
+      "--extra-vars",
+      jsonencode({
+        apk_repos = [for repo in ["main", "community"] : "{{ ctx.resolve_url('base', ctx.archs[0]) }}/${repo}"]
+        root_ssh_keypair_public = "${local.root_ssh_keypair.public}"
+      })
+    ]
+    playbook_file = "ansible-playbook.yml"
+    user = "root"
+    use_proxy = false
+  }
+
+  post-processors {
+{%- for arch in ctx.archs %}
+    post-processor "vagrant" {
+      only = ["qemu.alpine_{{ arch }}"]
+      output = "dist/alpine-image-vagrant_{{ arch }}/alpine_{{ arch }}.box"
+      vagrantfile_template = "Vagrantfile_{{ arch }}.tpl"
+    }
+
+    post-processor "checksum" {
+      only = ["qemu.alpine_{{ arch }}"]
+      checksum_types = ["sha256"]
+      output = "dist/alpine-image-vagrant_{{ arch }}/alpine_{{ arch }}.box.{{ '{{' }}.ChecksumType{{ '}}' }}"
+    }
+{%- endfor %}
+  }
+}

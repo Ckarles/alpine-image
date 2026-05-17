@@ -1,0 +1,13 @@
+name: "fedora-43"
+detect:
+  os: "fedora"
+  version: "43"
+firmware:
+  x86_64:
+    code: "/usr/share/edk2/ovmf/OVMF_CODE.fd"
+    vars: "/usr/share/edk2/ovmf/OVMF_VARS.fd"
+  aarch64:
+    code: "/usr/share/edk2/aarch64/QEMU_EFI-pflash.raw"
+    vars: "/usr/share/edk2/aarch64/QEMU_EFI-qemuvars-pflash.raw"
+qemu:
+  aarch64_binary: "qemu-system-aarch64"
